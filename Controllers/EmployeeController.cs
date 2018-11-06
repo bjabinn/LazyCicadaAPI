@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using LazyCicadaApi.Models;
+using LazyCicadaApi.Helpers;
 
 namespace LazyCicadaApi.Controllers
 {
@@ -10,36 +12,84 @@ namespace LazyCicadaApi.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        // GET api/emploee
+        private readonly LazyCicadaContext _context;
+        public EmployeeController(LazyCicadaContext context)
+        {
+            _context = context;
+        }
+
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public ActionResult<List<Employee>> GetAll()
         {
-            return new string[] { "employee_1", "employee_2" };
+            return _context.Employee.ToList();
+        }
+        
+        [HttpGet("{number:long}", Name = "GetByNumber")]
+        public ActionResult<Employee> GetByNumber(long number)
+        {
+            var employee = _context.Employee.SingleOrDefault(epy => epy.EpyNumber == number);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return employee;
+        }
+        
+        [HttpGet("{name}", Name = "GetByName")]
+        public ActionResult<List<Employee>> GetByName(string name)
+        {
+            var employee = _context.Employee.Where(
+                epy => (LazyCicadaApiHelper.RemoveAccentsWithNormalization(epy.EpyShortName.ToUpperInvariant()).Contains(LazyCicadaApiHelper.RemoveAccentsWithNormalization(name.ToUpperInvariant()))
+                || LazyCicadaApiHelper.RemoveAccentsWithNormalization(String.Concat(epy.EpyFirstName," ",epy.EpyLastName).ToUpperInvariant()).Contains(LazyCicadaApiHelper.RemoveAccentsWithNormalization(name.ToUpperInvariant())))
+                ).ToList();
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return employee;
         }
 
-        // GET api/emploee/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "employee_" + id;
-        }
-
-        // POST api/emploee
         [HttpPost]
-        public void Post([FromBody] string value)
+        public IActionResult Create(Employee employee)
         {
+            _context.Employee.Add(employee);
+            _context.SaveChanges();
+
+            return CreatedAtRoute("GetByNumber", new { number = employee.EpyNumber }, employee);
         }
 
-        // PUT api/emploee/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{number}")]
+        public IActionResult UpdateByNumber(long number, Employee employee)
         {
+            var epy = _context.Employee.SingleOrDefault(e => e.EpyNumber == number);
+            if (epy == null)
+            {
+                return NotFound();
+            }
+
+            epy.EpyNumber = employee.EpyNumber;
+            epy.EpyFirstName = employee.EpyFirstName;
+            epy.EpyLastName = employee.EpyLastName;
+            epy.EpyShortName = employee.EpyShortName;
+
+            _context.Employee.Update(epy);
+            _context.SaveChanges();
+            return NoContent();
         }
 
-        // DELETE api/emploee/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{number}")]
+        public IActionResult DeleteByNumber(long number)
         {
+            var employee = _context.Employee.SingleOrDefault(epy => epy.EpyNumber == number);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            _context.Employee.Remove(employee);
+            _context.SaveChanges();
+            return NoContent();
         }
+
     }
 }
