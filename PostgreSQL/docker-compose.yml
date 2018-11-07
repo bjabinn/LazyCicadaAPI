@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+
+  # PostgreSQL
+  postgres:
+    image: postgres
+    hostname: postgres
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+        - 5432:5432
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: postgres
+    restart: always
+
+  # pgAdmin client
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+        - 5555:80
+    links:
+      - postgres
+    container_name: pgadmin
+    environment:
+        PGADMIN_DEFAULT_EMAIL: lazycicada@everis.com
+        PGADMIN_DEFAULT_PASSWORD: root
+    restart: always
+    

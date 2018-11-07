@@ -32,7 +32,14 @@ namespace LazyCicadaApi
                 services.AddDbContext<LazyCicadaContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
+            Console.WriteLine(Configuration.GetConnectionString("DefaultConnection"));
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.HttpsPort = 443;
+            });
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

@@ -23,7 +23,7 @@ namespace LazyCicadaApi.Controllers
         {
             return _context.Employee.ToList();
         }
-        
+
         [HttpGet("{number:long}", Name = "GetByNumber")]
         public ActionResult<Employee> GetByNumber(long number)
         {

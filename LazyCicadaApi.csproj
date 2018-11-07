@@ -18,4 +18,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="cert.aspnetcore.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
