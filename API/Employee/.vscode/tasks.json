@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Api/Employee/LazyCicadaApi.csproj"
+                "${workspaceFolder}/LazyCicadaApi.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

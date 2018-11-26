@@ -1,8 +1,14 @@
 version: '3.4'
 
 services:
-  lazycicadaapi:
-    image: lazycicadaapi
+  lz-api-employee:
+    image: lz-api-employee
     build:
-      context: .
+      context: ./API/Employee
+      dockerfile: Dockerfile
+
+  lz-api-login:
+    image: lz-api-login
+    build:
+      context: ./API/LoginCicada
       dockerfile: Dockerfile

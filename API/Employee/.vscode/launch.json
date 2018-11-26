@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Api/Employee/bin/Debug/netcoreapp2.1/LazyCicadaApi.dll",
+            "program": "${workspaceFolder}/bin/Debug/netcoreapp2.1/LazyCicadaApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/Api/Employee",
+            "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "launchBrowser": {

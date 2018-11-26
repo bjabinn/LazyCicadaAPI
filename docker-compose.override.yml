@@ -1,49 +1,74 @@
 version: '3.4'
 
 services:
-  lazycicadaapi:
+  lz-api-employee:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_HTTPS_PORT=443
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/cert.aspnetcore.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234567   
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234567  
 #    depends_on:
 #      - postgres
 #    links:
 #      - postgres
+    container_name: lazycicada
     ports:
       - "53711:80"
       - "44356:443"
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-
+  
+  lz-api-login:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:4000;http://+:4001
+      - ASPNETCORE_HTTPS_PORT=4000
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/cert.aspnetcore.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234567
+    container_name: loginCicada
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+  # PostgreSQL
   postgres:
     image: postgres
     #hostname: postgres
     build:
-        context: .
-        dockerfile: DockerfilePostgre
+        context: ./PostgreSQL
+        dockerfile: Dockerfile
     ports:
         - "5432:5432"
-    #container_name: postgres
+    container_name: lz-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
       POSTGRES_DB: postgres
     restart: always
-
-  # pgAdmin client
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-        - "5555:80"
-    links:
-      - postgres
-    container_name: pgadmin
-    environment:
-        PGADMIN_DEFAULT_EMAIL: lazycicada@everis.com
-        PGADMIN_DEFAULT_PASSWORD: root
-    restart: always 
     
+  # pgAdmin client
+  #lz-pgadmin:
+  #  image: dpage/pgadmin4
+  #  ports:
+  #      - "5555:80"
+  #  links:
+  #    - postgres
+  #  container_name: lz-pgadmin
+  #  environment:
+  #      PGADMIN_DEFAULT_EMAIL: lazycicada@everis.com
+  #      PGADMIN_DEFAULT_PASSWORD: root
+  #  restart: always 
+   
+
+  redis:
+    image: bitnami/redis
+    environment:
+        - REDIS_PASSWORD=root
+    ports:
+        - 6379:6379 
+    volumes:
+        - ../data/redis:/data   
