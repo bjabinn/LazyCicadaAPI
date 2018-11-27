@@ -6,9 +6,13 @@ services:
     build:
       context: ./API/Employee
       dockerfile: Dockerfile
-
   lz-api-login:
     image: lz-api-login
     build:
       context: ./API/LoginCicada
       dockerfile: Dockerfile
+  lz-api-everisLdap:
+    image: lz-api-everisldap
+    build:
+        context: ./API/EverisLdap
+        dockerfile: Dockerfile

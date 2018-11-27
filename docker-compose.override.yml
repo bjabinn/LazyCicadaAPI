@@ -10,8 +10,8 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=1234567  
 #    depends_on:
 #      - postgres
-#    links:
-#      - postgres
+    links:
+      - postgres
     container_name: lazycicada
     ports:
       - "53711:80"
@@ -34,6 +34,22 @@ services:
     volumes:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+  
+  lz-api-everisLdap:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:4011;http://+:4012
+      - ASPNETCORE_HTTPS_PORT=4011
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/cert.aspnetcore.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=1234567
+    container_name: everisLdap
+    ports:
+      - "4011:4011"
+      - "4012:4012"
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      
   # PostgreSQL
   postgres:
     image: postgres
